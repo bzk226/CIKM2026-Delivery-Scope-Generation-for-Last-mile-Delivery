@@ -4,15 +4,15 @@
 
 **CIKM 2026 · Applied Research Track (Poster)**  
 **Authors:** Zhongkai Bao, Jing Zhao, Wei Liang, Ning Chen  
-**Affiliation:** Dingdong (Cayman) Limited, Shanghai, China
 **Email:** baozhongkai@100.me, zhaojing12@100.me
+**Affiliation:** Dingdong (Cayman) Limited, Shanghai, China  
 **DOI:** [10.1145/3799682.3840112](https://doi.org/10.1145/3799682.3840112) *(publication link may not yet be active)*
 
 > This page is an independently written research overview. It does not include the camera-ready paper or reproduce its original figures.
 
 ## Overview
 
-Non-overlapping delivery scope generation assigns urban areas to fixed front delivery centers (FDCs) while maintaining **complete coverage, spatial contiguity, and order-volume limits**. At city scale, this is challenging because road-derived regions may be too coarse, AOIs are spatially fragmented, and exact optimization becomes computationally expensive.
+Non-overlapping delivery scope generation assigns urban areas to fixed front delivery centers (FDCs) while maintaining **complete coverage, spatial contiguity, and order-volume limits**. At city scale, this is challenging because road-derived regions may be too coarse, Areas of Interest (AOIs) are spatially fragmented, and exact optimization becomes computationally expensive.
 
 We introduce an end-to-end framework combining **fine-grained geographic segmentation, region connectivity modeling, a two-stage optimization formulation, and model-enhanced iterative search**. The framework supports both order-weighted delivery distance and learning-estimated amortized delivery distance.
 
@@ -35,7 +35,7 @@ Our main contributions are:
 
 ### 1. Urban Area Segmentation and Connectivity Identification
 
-We clean the road network by filtering minor roads, consolidating parallel segments, and extending selected dead ends; then segment the area using roads and waterways and refine irregular regions. Large road-derived regions are further divided using AOI adjacency extraction, clustering, boundary expansion, and segmentation.
+We clean the road network by filtering minor roads, consolidating parallel segments into centerlines, and extending selected dead ends to nearby intersections without crossing AOI boundaries; then segment the area using roads and waterways and refine irregular regions. Large road-derived regions are further divided using AOI adjacency extraction, clustering, boundary expansion, and segmentation.
 
 Each resulting atomic region is represented as a **graph vertex**. Adjacency edges are identified by distance screening, exclusion of diagonal-only contacts, and shared-boundary verification. Auxiliary edges connect otherwise disconnected graph components for the assignment formulation.
 
@@ -48,9 +48,9 @@ Each resulting atomic region is represented as a **graph vertex**. Adjacency edg
 With fixed FDC locations, the model assigns each atomic region to exactly one FDC under **minimum/maximum order volume** and **region connectivity** constraints. Two objectives are considered separately:
 
 - **Order-weighted delivery distance:** aggregate region order volumes weighted by navigation distance to their assigned FDCs.
-- **Amortized delivery distance:** evaluate courier multi-order delivery costs using a GNN-based estimator as a plug-in objective evaluator, not a newly proposed predictive architecture.
+- **Amortized delivery distance:** estimate delivery distance accounting for multi-order courier trips using a graph neural network (GNN)-based estimator as a plug-in objective evaluator, not a newly proposed predictive architecture.
 
-The **two-stage enhanced model** first solves an assignment model without connectivity constraints, then identifies a sink region for each FDC from the relaxed assignment and adds flow-based connectivity constraints. This reduces the need for extra sink-selection binaries and large-constant constraints.
+The **two-stage enhanced model** first solves an assignment model without connectivity constraints, then identifies a sink region for each FDC from the relaxed assignment, selecting the region with the shortest delivery distance to that FDC. The second stage adds flow-based connectivity constraints using these fixed sinks. This eliminates sink-selection binary variables and reduces the use of large constants.
 
 ### 3. Model-enhanced Iterative Search
 
@@ -59,6 +59,8 @@ For large instances, **Iterative Search (IS)** operates on adjacent FDC pairs an
 ## Key Experimental Results
 
 Experiments use data from **five Chinese cities**. The following findings correspond to distinct evaluation settings and should not be treated as one combined benchmark.
+
+Total distance reduction (TDR) is `(F₀ − Fₐ) / F₀ × 100%`, where `F₀` is the objective value of the delivery scopes originally used in operations and `Fₐ` is the value obtained by the evaluated algorithm. It is computed separately for each objective. The 200 optimization instances comprise 50 instances each with 5, 10, 15, and 20 FDCs.
 
 - **Near-optimality:** On the **96 instances** where the two-stage exact model proved optimality, IS had an average **0.99% objective gap** with **96.20% less computation time**. The solved subset may be easier than the unsolved instances.
 - **Published baseline:** Across **200 instances**, IS achieved **4.97%** average total distance reduction (TDR) versus **1.51%** for adapted E-partition-A; average runtimes were **18.30 s** and **4.72 s**, respectively.
@@ -75,23 +77,23 @@ Experiments use data from **five Chinese cities**. The following findings corres
 
 ![Representative results](figures/representative_results.png)
 
-*Figure 3. Summary of solution quality, city-scale performance, and industrial deployment metrics (newly created illustrative visualization; values are from the reported experiments).*
+*Figure 3. Summary of distinct evaluation settings: the 96-instance solved subset for the objective-gap and exact-model runtime comparisons; all 200 instances for the IS/E-partition-A comparison; the 312-FDC city-scale test; and the three-month post-deployment comparison with a pre-deployment baseline. Numerical values are reported experimental results; the map is a conceptual illustration, not a visualization of the test city's geographic data.*
 
 ## Industrial Deployment
 
 The system has been deployed at **Dingdong**, which operates across **25 cities**, with **over 1,000 FDCs** and **more than one million daily orders**. Teams use its delivery-scope recommendations, may refine them manually, and publish adopted scopes to downstream systems.
 
-A **before/after comparison** using three months of post-deployment data reports:
+A **before/after comparison** uses three months of post-deployment data and a pre-deployment baseline with coarse segmentation, no connectivity constraints, and a simple integer programming model. All metric values below are averages.
 
 | Metric | Before | Deployed system | Change |
 |---|---:|---:|---:|
-| Adjustment Frequency (AF) | 1.90 | 1.51 | −20.52% |
+| Adjustment Frequency (AF) | 1.90 | 1.51 | −0.39 |
 | Consistency Ratio (CR) | 76.93% | 84.77% | +7.84 percentage points |
 | Average Distance Reduction (ADR) | 2.84% | 3.07% | +0.23 percentage points |
-| Reduction in orders beyond 3 km (Δ3km) | 2.54% | 3.25% | +0.71 percentage points |
+| Reduction in the proportion of orders beyond 3 km (Δ3km) | 2.54% | 3.25% | +0.71 percentage points |
 | Total Running Time (TRT) | 159.34 s | 73.46 s | −53.90% |
 
-**CR** measures the order-volume overlap between recommended and adopted scopes divided by the larger scope's order volume. These observational deployment results do not establish randomized causal effects.
+**AF** counts manual modifications. **CR** measures the order-volume overlap between recommended and adopted scopes divided by the larger scope's order volume. **ADR** measures the reduction in average delivery distance per order. **Δ3km** measures the reduction in the proportion of orders exceeding 3 km; the table compares this reduction metric, rather than the raw proportion of long-distance orders. **TRT** includes data loading, optimization, scope generation, and statistics computation. These observational deployment results do not establish randomized causal effects.
 
 ## Conclusion and Outlook
 
