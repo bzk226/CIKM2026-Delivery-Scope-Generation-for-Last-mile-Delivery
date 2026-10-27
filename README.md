@@ -4,7 +4,7 @@
 
 **CIKM 2026 · Applied Research Track (Poster)**  
 **Authors:** Zhongkai Bao, Jing Zhao, Wei Liang, Ning Chen  
-**Email:** baozhongkai@100.me / b18321889254@163.com, zhaojing12@100.me
+**Email:** baozhongkai@100.me / b18321889254@163.com, zhaojing12@100.me,
 **Affiliation:** Dingdong (Cayman) Limited, Shanghai, China  
 **DOI:** [10.1145/3799682.3840112](https://doi.org/10.1145/3799682.3840112) *(publication link may not yet be active)*
 
