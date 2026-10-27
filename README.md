@@ -35,7 +35,7 @@ Our main contributions are:
 
 ### 1. Urban Area Segmentation and Connectivity Identification
 
-We clean the road network by filtering minor roads, consolidating parallel segments into centerlines, and extending selected dead ends to nearby intersections without crossing AOI boundaries; then segment the area using roads and waterways and refine irregular regions. Large road-derived regions are further divided using AOI adjacency extraction, clustering, boundary expansion, and segmentation.
+We clean the road network by filtering minor roads, consolidating parallel segments into centerlines, and extending selected dead ends to nearby intersections without crossing AOI boundaries; then segment the area using roads and waterways and refine irregular regions. Large road-derived regions are further divided using AOI boundaries. This process involves adjacency extraction, clustering, boundary expansion, and segmentation.
 
 Each resulting atomic region is represented as a **graph vertex**. Adjacency edges are identified by distance screening, exclusion of diagonal-only contacts, and shared-boundary verification. Auxiliary edges connect otherwise disconnected graph components for the assignment formulation.
 
