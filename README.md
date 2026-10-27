@@ -103,4 +103,4 @@ Fine-grained spatial representation, explicit connectivity constraints, and hybr
 
 **Zhongkai Bao, Jing Zhao, Wei Liang, and Ning Chen.** *Delivery Scope Generation for Last-mile Delivery: Fine-grained Urban Area Segmentation, Modeling, and Optimization.* Proceedings of the 35th ACM International Conference on Information and Knowledge Management (CIKM 2026), Applied Research Track. DOI: [10.1145/3799682.3840112](https://doi.org/10.1145/3799682.3840112).
 
-The paper PDF, source code, and original operational datasets are **not included** in this repository. Data availability is subject to desensitization and applicable permissions. All three images are newly generated **conceptual/illustrative figures**, not copies of paper figures or geographic data visualizations.
+The paper PDF, source code, and original operational datasets are **not included** in this repository. All three images are newly generated **conceptual/illustrative figures**, not copies of paper figures or geographic data visualizations.
